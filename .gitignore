@@ -36,5 +36,7 @@
 ehthumbs.db
 Thumbs.db
 
-# Raw data file #
+# Raw data files #
 yelp_academic_dataset_review.json
+yelp_academic_dataset_business.json
+yelp_academic_dataset_user.json
