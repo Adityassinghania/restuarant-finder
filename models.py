@@ -28,8 +28,11 @@ class yelp_reviews(db.Document):
     # // integer, number of cool votes received
     cool =db.IntField(default=0)
 
+class attributes(db.EmbeddedDocument):
+    RestaurantsTakeOut  = db.BooleanField()
+    BusinessParking  = db.DictField()
 
-class yelp_business(db.Document):
+class yelp_businesses(db.Document):
     # // string, 22 character unique string business id
     business_id = db.StringField(max_length = 22)
 
@@ -61,7 +64,7 @@ class yelp_business(db.Document):
     review_count  = db.IntField()
 
     # // integer, 0 or 1 for closed or open, respectively
-    is_open  = db.IntFiled()
+    is_open  = db.IntField()
 
     # // object, business attributes to values. note = some attribute values might be objects
     attributes  = db.EmbeddedDocumentField(attributes)
@@ -71,7 +74,3 @@ class yelp_business(db.Document):
 
     # // an object of key day to value hours, hours are using a 24hr clock
     hours  = db.DictField()
-
-class attributes(db.EmbeddedDocument):
-    RestaurantsTakeOut  = db.BooleanField()
-    BusinessParking  = db.DictField()

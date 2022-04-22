@@ -5,5 +5,5 @@ class Config(object):
 
     MONGODB_SETTINGS = {
         'db' : 'test',
-        'host':'mongodb://ec2-44-201-211-124.compute-1.amazonaws.com:27017'
+        'host':'ec2-44-203-201-144.compute-1.amazonaws.com:27017'
     }
