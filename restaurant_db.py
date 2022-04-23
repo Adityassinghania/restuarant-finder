@@ -3,7 +3,7 @@ import json
 from pymongo import MongoClient, InsertOne
 
 # MONGOS server client
-client = pymongo.MongoClient("mongodb://ec2-18-205-105-6.compute-1.amazonaws.com:27017")
+client = pymongo.MongoClient("mongodb://ec2-54-210-106-126.compute-1.amazonaws.com:27020")
 db = client.test
 
 # loading RESTAURANTS
