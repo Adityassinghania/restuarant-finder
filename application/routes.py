@@ -6,8 +6,6 @@ from flask import jsonify, request, Response
 from flask_mongoengine import MongoEngine
 from flask_restx import Resource
 
-USER_IDs = ["Ha3iJu77CxlrFm-vQRs_8g","","",""]
-
 @api.route('/')
 class Home(Resource):
     def get():
