@@ -1,27 +1,17 @@
 from os import abort
+from Extras.helpers import generate_22char_uuid
 from application import app,api
 from models import yelp_businesses, yelp_reviews
 from flask import jsonify, request, Response
 from flask_mongoengine import MongoEngine
 from flask_restx import Resource
 
-@app.route('/')
-def test_check_connect():
+USER_IDs = ["Ha3iJu77CxlrFm-vQRs_8g","","",""]
+
+@api.route('/')
+class Home(Resource):
+    def get():
         return "<h1> Restaurant Finder <h1>"
-
-# @app.route('/reviews', methods=['GET'])
-# def get_reviews():
-#     reviews = yelp_reviews.objects().to_json()
-#     return Response(reviews, mimetype="application/json", status=200)
-
-# @app.route("/postreview", methods=['POST'])
-# def insert_review():
-#     if not request.json:
-#         abort(400)
-#     body = request.get_json()
-#     review = yelp_reviews(**body).save()
-#     id = review.id
-#     return {'id': str(id)}, 200
 
 @api.route('/restaurants/<city_name>')
 class GetBusinessesByCity(Resource):
@@ -32,3 +22,13 @@ class GetBusinessesByCity(Resource):
 class GetReviewsByRestaurantId(Resource):
     def get(self,r_id):
         return jsonify(yelp_reviews.objects(business_id = r_id))
+    
+    def post(self,r_id):
+        data = api.payload
+        data["business_id"] = r_id
+        data["review_id"] = generate_22char_uuid()
+        data["user_id"] = generate_22char_uuid()
+        print(str(data))
+        review = yelp_reviews(**data)
+        res = review.save()
+        return jsonify(res)
