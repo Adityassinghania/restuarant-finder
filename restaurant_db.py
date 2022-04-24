@@ -21,6 +21,7 @@ with open(r"./dataset/yelp_academic_dataset_business.json") as biz_file:
         # only append if it's a restaurant
         if type(categories) is str and ("Restaurants" in categories or "Food" in categories):
             requesting.append(InsertOne(myDict))
+            i += 1
         elif type(categories) is not str:
             no_category += 1
         else:
