@@ -74,3 +74,77 @@ class yelp_businesses(db.Document):
 
     # // an object of key day to value hours, hours are using a 24hr clock
     hours  = db.DictField()
+
+class yelp_users(db.Document):
+    # // string, 22 character unique user id, maps to the user in user.json
+    user_id = db.StringField(max_length = 22)
+
+    # // string, the user's first name
+    name = db.StringField()
+
+    # // integer, the number of reviews they've written
+    review_count = db.IntField()
+
+    # // string, when the user joined Yelp, formatted like YYYY-MM-DD
+    yelping_since = db.StringField()
+
+    # // array of strings, an array of the user's friend as user_ids
+    friends = db.ListField(db.StringField())
+
+    # // integer, number of useful votes sent by the user
+    useful = db.StringField(default=0)
+
+    # // integer, number of funny votes sent by the user
+    funny = db.IntField(default=0)
+
+    # // integer, number of cool votes sent by the user
+    cool = db.IntField(default=0)
+
+    # // integer, number of fans the user has
+    fans = db.IntField(default=0)
+
+    # // array of integers, the years the user was elite
+    elite = db.ListField(db.IntField())
+
+    # // float, average rating of all reviews
+    average_stars = db.FloatField(default=0)
+
+    # // integer, number of hot compliments received by the user
+    compliment_hot = db.IntField(default=0)
+
+    # // integer, number of more compliments received by the user
+    compliment_more = db.IntField(default=0)
+
+    # // integer, number of profile compliments received by the user
+    compliment_profile = db.IntField(default=0)
+
+    # // integer, number of cute compliments received by the user
+    compliment_cute = db.IntField(default=0)
+
+    # // integer, number of list compliments received by the user
+    compliment_list = db.IntField(default=0)
+
+    # // integer, number of note compliments received by the user
+    compliment_note = db.IntField(default=0)
+
+    # // integer, number of plain compliments received by the user
+    compliment_plain = db.IntField(default=0)
+
+    # // integer, number of cool compliments received by the user
+    compliment_cool = db.IntField(default=0)
+
+    # // integer, number of funny compliments received by the user
+    compliment_funny = db.IntField(default=0)
+
+    # // integer, number of writer compliments received by the user
+    compliment_writer = db.IntField()
+
+    # // integer, number of photo compliments received by the user
+    compliment_photos = db.IntField()
+
+class yelp_checkins(db.Document):
+    # // string, 22 character business id, maps to business in business.json
+    business_id = db.StringField(max_length = 22)
+
+    # // string which is a comma-separated list of timestamps for each checkin, each with format YYYY-MM-DD HH:MM:SS
+    date = db.StringField()
