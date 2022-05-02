@@ -73,7 +73,7 @@ class UpdateUserTrustRating(Resource):
         for user in user_objs:
                 if int(year) not in user["elite"]:
                     user["elite"].append(int(year))
-        res = user.save()
+        res = user_objs.save()
         return jsonify(res)
 
 @api.route('/user_useful_rev/<b_id>')
@@ -99,7 +99,6 @@ class GetRestaurantsBasedOnUserInput(Resource):
         reviews = yelp_reviews.objects(business_id = restaurants, text__icontains = user_input)
         return jsonify(reviews)
     
-# NEEDS FIXING
 @api.route('/insert_restaurant')
 class InsertNewRestaurant(Resource):
     def post(self):
@@ -111,7 +110,7 @@ class InsertNewRestaurant(Resource):
 
 @api.route('/edit_review')
 class UpdateRestaurantReview(Resource):
-    def put(self, review_id):
+    def put(self):
         data = api.payload
         review_obj = yelp_reviews.objects(review_id = data["review_id"])
         if review_obj["user_id"] == data["token"]:
