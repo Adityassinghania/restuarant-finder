@@ -1,7 +1,7 @@
 from os import abort
 from Extras.helpers import generate_22char_uuid
-from application import app,api
-from models import yelp_businesses, yelp_reviews, yelp_checkins
+from application import api
+from models import yelp_businesses, yelp_reviews, yelp_checkins, yelp_users
 from flask import jsonify, request, Response
 from flask_mongoengine import MongoEngine
 from flask_restx import Resource
@@ -36,6 +36,15 @@ class GetReviewsByRestaurantId(Resource):
         review = yelp_reviews(**data)
         res = review.save()
         return jsonify(res)
+
+@api.route('/del_review/')
+class DeleteReview(Resource):
+    def delete():
+        data = api.payload
+        review = yelp_reviews.objects(review_id = data["review_id"])
+        if(review["user_Id"] == data["token"]):
+            res = yelp_reviews.delete(review)
+        return jsonify(res) 
 
 # NEEDS FIXING
 @api.route('/del_short_reviews/<char_count>')
