@@ -139,7 +139,7 @@ class UpdateRestaurantReview(Resource):
         review_obj = yelp_reviews.objects(review_id = data["review_id"])
         if review_obj["user_id"] == data["token"]:
             review_obj["text"] = data["text"]
-            res = yelp_reviews.save(review_obj)
+            res = review_obj.save(review_obj)
         else:
             res = "invalid review or invalid token"
 
@@ -151,5 +151,5 @@ class AddCheckIn(Resource):
         data = api.payload
         checkin_ob = yelp_checkins.objects(business_id = b_id)
         checkin_ob["date"] += datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-        res = yelp_checkins.save(checkin_ob)
+        res = checkin_ob.save()
         return jsonify(res)
