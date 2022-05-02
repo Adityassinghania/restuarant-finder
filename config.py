@@ -4,6 +4,6 @@ class Config(object):
     SECRET_KY = os.environ.get('SECRET_KEY') or "teamray"
 
     MONGODB_SETTINGS = {
-        'db' : 'test',
-        'host':'ec2-34-238-121-163.compute-1.amazonaws.com:27017'
+        'db' : 'testdb',
+        'host':'ec2-44-202-81-95.compute-1.amazonaws.com:27017'
     }

@@ -4,7 +4,7 @@ import json
 from pymongo import MongoClient, InsertOne
 # connection
 try:
-    client = pymongo.MongoClient("mongodb://ec2-3-83-96-188.compute-1.amazonaws.com:27017")
+    client = pymongo.MongoClient("ec2-44-202-81-95.compute-1.amazonaws.com:27017")
     print("connection successful!")
 except:
     print("Could not connect!!")
