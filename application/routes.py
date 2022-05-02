@@ -90,26 +90,14 @@ class GetUsersWithMaxUsefulReviews(Resource):
 
         return jsonify(user_objs)
 
-#Needs fixing
-@api.route('/restaurants_user_match/<user_input>')
+@api.route('/restaurants_user_match/<city_name>/<user_input>')
 class GetRestaurantsBasedOnUserInput(Resource):
     # fetch all reviews of restaurant and do substring match and substring comes from url. pass as a query param
-    def get(self,user_input):
-        business_objs = yelp_businesses.objects()
-        restaurants = []
-        for restaurant in business_objs:
-            # check if user input in the restaurant name
-            if user_input.casefold() in restaurant["name"].casefold():
-                restaurants.append(restaurant)
-            
-            # # if not, check if the input is a certain category
-            # else:
-            #     for i in restaurant["categories"]:
-            #         if user_input in i:
-            #             restaurants.append(restaurant)
-            #             break
-    
-        return jsonify(restaurants)
+    def get(self,city_name,user_input):
+        business_objs = yelp_businesses.objects(city = city_name)
+        restaurants = [business["business_id"] for business in business_objs]
+        reviews = yelp_reviews.objects(business_id = restaurants, text__icontains = user_input)
+        return jsonify(reviews)
     
 # NEEDS FIXING
 @api.route('/insert_restaurant')
