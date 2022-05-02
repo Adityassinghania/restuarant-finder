@@ -1,4 +1,5 @@
 from os import abort
+import re
 from Extras.helpers import generate_22char_uuid
 from application import api
 from models import yelp_businesses, yelp_reviews, yelp_checkins, yelp_users
@@ -37,7 +38,7 @@ class GetReviewsByRestaurantId(Resource):
         res = review.save()
         return jsonify(res)
 
-@api.route('/del_review/')
+@api.route('/del_review')
 class DeleteReview(Resource):
     def delete():
         data = api.payload
@@ -48,30 +49,18 @@ class DeleteReview(Resource):
             res = "invalid token"
         return jsonify(res) 
 
-# NEEDS FIXING
-@api.route('/del_short_reviews/<word_count>')
+@api.route('/del_short_reviews/<char_count>')
 class DeleteShortReviews(Resource):
     # use get call, add reviews to a list that don't meet a minimum, and then remove them
     # look for reviews that don't exceed a character count
     def delete(self, char_count):
-        review_objs = yelp_reviews.objects(review_id = char_count)
-        delete_count = 0
-        deleted_reviews = []
-        deleted_reviews.append(review_objs)
-        yelp_reviews.delete(review_objs)
-
-        # for review in review_objs:
-        #     text = review["text"]
-        #     if len(text) < char_count:
-        #         delete_count += 1
-        #         deleted_reviews.append(review)
-        #         review.delete()
-            
-        #     if delete_count == 100:
-        #         break
-
-        # print('deleted', delete_count, 'short reviews')
-        return jsonify(deleted_reviews)
+        regex = re.compile('/^[a-zA-Z]{1,'+char_count+'}$/')
+        review_objs = yelp_reviews.objects(text = regex)
+        if len(review_objs) > 0:
+            res = yelp_reviews.delete(review_objs)
+        else:
+            res = "No reviews found to delete!"
+        return jsonify(res)
 
 @api.route('/user_trust/<rev_count>')
 class UpdateUserTrustRating(Resource):
@@ -101,7 +90,7 @@ class GetUsersWithMaxUsefulReviews(Resource):
 
         return jsonify(user_objs)
 
-
+#Needs fixing
 @api.route('/restaurants_user_match/<user_input>')
 class GetRestaurantsBasedOnUserInput(Resource):
     # fetch all reviews of restaurant and do substring match and substring comes from url. pass as a query param
