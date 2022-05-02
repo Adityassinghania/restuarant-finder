@@ -44,6 +44,8 @@ class DeleteReview(Resource):
         review = yelp_reviews.objects(review_id = data["review_id"])
         if(review["user_Id"] == data["token"]):
             res = yelp_reviews.delete(review)
+        else:
+            res = "invalid token"
         return jsonify(res) 
 
 # NEEDS FIXING
@@ -85,13 +87,11 @@ class UpdateUserTrustRating(Resource):
         res = user.save()
         return jsonify(res)
 
-
-# NEEDS FIXING
-@api.route('/user_useful_rev/<business_id>')
+@api.route('/user_useful_rev/<b_id>')
 class GetUsersWithMaxUsefulReviews(Resource):
-    def get(self,business_id):
+    def get(self,b_id):
         # get reviews for a specific business
-        rev_objs = yelp_reviews.objects(business_id=business_id).order_by("useful")
+        rev_objs = yelp_reviews.objects(business_id=b_id).order_by("useful")
         number_of_reviews = len(rev_objs) if len(rev_objs) < 10 else 10
         # get top 10 most useful reviews
         review_users = [rev_objs[i]["user_id"] for i in range(number_of_reviews)]
@@ -128,37 +128,28 @@ class InsertNewRestaurant(Resource):
     def post(self):
         data = api.payload
         data["business_id"] = generate_22char_uuid()
-        print(str(data))
-
         business = yelp_businesses(**data)
         res = business.save()
         return jsonify(res)
 
-# NEEDS FIXING
-@api.route('/update_review/<review_id>')
+@api.route('/edit_review')
 class UpdateRestaurantReview(Resource):
-    # do a .save and pass a review id. change text but not the id
     def put(self, review_id):
         data = api.payload
-        review_obj = yelp_reviews.objects(review_id = review_id)
-        review_obj.update(text=data['text'])
-        
-        review = yelp_reviews(**review_obj)
-        res = review.save()
+        review_obj = yelp_reviews.objects(review_id = data["review_id"])
+        if review_obj["user_id"] == data["token"]:
+            review_obj["text"] = data["text"]
+            res = yelp_reviews.save(review_obj)
+        else:
+            res = "invalid review or invalid token"
+
         return jsonify(res)
 
-
-# NEEDS FIXING
-@api.route('/add_checkin/<business_id>')
+@api.route('/add_checkin/<b_id>')
 class AddCheckIn(Resource):
-    def put(self,business_id):
-        # data = api.payload
-        checkin_obj = yelp_checkins.objects(business_id = business_id)
-        # checkin_dates = checkin_obj["date"]
-        # checkin_new = checkin_dates + data['date']
-        # checkin_obj.update(date=checkin_new)
-
-        # checkin = yelp_checkins(**checkin_obj)
-        # res = checkin.save()
-        # return jsonify(res)
-        return jsonify(checkin_obj)
+    def put(self,b_id):
+        data = api.payload
+        checkin_ob = yelp_checkins.objects(business_id = b_id)
+        checkin_ob["date"] += datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        res = yelp_checkins.save(checkin_ob)
+        return jsonify(res)
