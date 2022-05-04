@@ -1,8 +1,8 @@
 from os import abort
 import re
 from Extras.helpers import generate_22char_uuid
-from application import api
-from models import yelp_businesses, yelp_reviews, yelp_checkins, yelp_users
+from application import app,api
+from models import yelp_businesses, yelp_reviews, yelp_users, yelp_checkins
 from flask import jsonify, request, Response
 from flask_mongoengine import MongoEngine
 from flask_restx import Resource
@@ -120,3 +120,30 @@ class AddCheckIn(Resource):
         checkin_ob["date"] += datetime.today().strftime('%Y-%m-%d %H:%M:%S')
         res = checkin_ob.save()
         return jsonify(res)
+
+@api.route('/restaurants_sorted/<city_name>/')
+class SortRestaurantsByReviewCount(Resource):
+    def get(self, city_name):
+        business_objs = yelp_businesses.objects(city = city_name)
+        return jsonify(business_objs.order_by('-review_count'))
+        
+# sort_key = "useful" | "funny" | "cool"
+@api.route('/reviews_sorted/<r_id>/<sort_key>')
+class SortReviews(Resource):
+    def get(self, r_id, sort_key):
+        review_objs = yelp_reviews.objects(business_id = r_id).order_by('-' + sort_key)
+        return jsonify(review_objs)
+
+@api.route('/review_useful/<r_id>')
+class IncrementReviewUseful(Resource):
+    def put(self, r_id):
+        review_obj = yelp_reviews.objects(review_id = r_id).first()
+        review_obj["useful"] += 1
+        res = review_obj.save(review_obj)
+        return jsonify(res)
+
+@api.route('/restaurants_by_category/<category>')
+class RestaurantsByCategory(Resource):
+    def get(self, category):
+        business_objs = yelp_businesses.objects(categories__icontains = category)
+        return jsonify(business_objs)
