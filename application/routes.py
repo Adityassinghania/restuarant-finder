@@ -69,11 +69,14 @@ class UpdateUserTrustRating(Resource):
         # get user with review count greater than equal to threshold
         user_objs = yelp_users.objects(review_count__gte = review_threshold)
         year = datetime.now().year
-        # upadte yearn in their elite field
+        # update year in user
         for user in user_objs:
-                if int(year) not in user["elite"]:
-                    user["elite"].append(int(year))
-        res = user_objs.save()
+            # i had to change "elite" to just String type, ListField(stringfield) wasn't working for some reason
+            # same for other attributes previously that were ListFields
+            if str(year) not in user["elite"]:
+                user["elite"] += ', ' + str(year)
+                user.save()
+        res = user_objs
         return jsonify(res)
 
 @api.route('/user_useful_rev/<b_id>')
@@ -90,6 +93,7 @@ class GetUsersWithMaxUsefulReviews(Resource):
 
         return jsonify(user_objs)
 
+# still need to test
 @api.route('/restaurants_user_match/<city_name>/<user_input>')
 class GetRestaurantsBasedOnUserInput(Resource):
     # fetch all reviews of restaurant and do substring match and substring comes from url. pass as a query param
@@ -113,9 +117,10 @@ class UpdateRestaurantReview(Resource):
     def put(self):
         data = api.payload
         review_obj = yelp_reviews.objects(review_id = data["review_id"])
-        if review_obj["user_id"] == data["token"]:
-            review_obj["text"] = data["text"]
-            res = review_obj.save(review_obj)
+        if review_obj[0]["user_id"] == data["token"]:
+            for rev in review_obj:
+                rev["text"] = data["text"]
+                res = rev.save()
         else:
             res = "invalid review or invalid token"
 
@@ -124,8 +129,9 @@ class UpdateRestaurantReview(Resource):
 @api.route('/add_checkin/<b_id>')
 class AddCheckIn(Resource):
     def put(self,b_id):
-        data = api.payload
-        checkin_ob = yelp_checkins.objects(business_id = b_id)
-        checkin_ob["date"] += datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-        res = checkin_ob.save()
+        checkin_obj = yelp_checkins.objects(business_id = b_id)
+        for checkin in checkin_obj:
+            checkin["date"] += ', ' + datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+            res = checkin.save()
+
         return jsonify(res)

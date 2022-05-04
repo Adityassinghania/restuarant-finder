@@ -126,10 +126,10 @@ class yelp_users(db.Document):
     yelping_since = db.StringField()
 
     # // array of strings, an array of the user's friend as user_ids
-    friends = db.ListField(db.StringField())
+    friends = db.StringField()
 
     # // integer, number of useful votes sent by the user
-    useful = db.StringField(default=0)
+    useful = db.IntField(default=0)
 
     # // integer, number of funny votes sent by the user
     funny = db.IntField(default=0)
@@ -141,7 +141,7 @@ class yelp_users(db.Document):
     fans = db.IntField(default=0)
 
     # // array of integers, the years the user was elite
-    elite = db.ListField(db.IntField())
+    elite = db.StringField()
 
     # // float, average rating of all reviews
     average_stars = db.FloatField(default=0)
