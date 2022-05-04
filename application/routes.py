@@ -38,16 +38,6 @@ class GetReviewsByRestaurantId(Resource):
         res = review.save()
         return jsonify(res)
 
-@api.route('/del_review')
-class DeleteReview(Resource):
-    def delete():
-        data = api.payload
-        review = yelp_reviews.objects(review_id = data["review_id"])
-        if(review["user_Id"] == data["token"]):
-            res = yelp_reviews.delete(review)
-        else:
-            res = "invalid token"
-        return jsonify(res) 
 
 @api.route('/del_short_reviews/<char_count>')
 class DeleteShortReviews(Resource):
