@@ -6,7 +6,7 @@ class yelp_reviews(db.Document):
     review_id =  db.StringField(unique = True, max_length = 22)
 
     # string, 22 character unique user id, maps to the user in user.json
-    user_id =  db.StringField(unique = True, max_length = 22)
+    user_id =  db.StringField(unique = False, max_length = 22)
 
     # string, 22 character business id, maps to business in business.json
     business_id = db.StringField(max_length = 22)
