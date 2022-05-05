@@ -83,14 +83,16 @@ class GetUsersWithMaxUsefulReviews(Resource):
 
         return jsonify(user_objs)
 
-# still need to test
 @api.route('/restaurants_user_match/<city_name>/<user_input>')
 class GetRestaurantsBasedOnUserInput(Resource):
     # fetch all reviews of restaurant and do substring match and substring comes from url. pass as a query param
     def get(self,city_name,user_input):
+        # look for businesses in city
         business_objs = yelp_businesses.objects(city = city_name)
+        # get list of business ids
         restaurants = [business["business_id"] for business in business_objs]
-        reviews = yelp_reviews.objects(business_id = restaurants, text__icontains = user_input)
+        # get reviews where business id is in restaurants array and user input is in a review
+        reviews = yelp_reviews.objects(business_id__in = restaurants, text__icontains = user_input)
         return jsonify(reviews)
     
 @api.route('/insert_restaurant')
