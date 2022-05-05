@@ -41,14 +41,17 @@ class GetReviewsByRestaurantId(Resource):
 
 @api.route('/del_short_reviews/<char_count>')
 class DeleteShortReviews(Resource):
-    # use get call, add reviews to a list that don't meet a minimum, and then remove them
-    # look for reviews that don't exceed a character count
+    # this works, but it takes awhile
     def delete(self, char_count):
-        regex = re.compile('/^[a-zA-Z]{1,'+char_count+'}$/')
-        review_objs = yelp_reviews.objects(text = regex)
-        if len(review_objs) > 0:
-            res = yelp_reviews.delete(review_objs)
-        else:
+        pattern = '^[a-zA-Z]{1,' + char_count + '}'
+        review_objs = yelp_reviews.objects(text__regex = re.compile(pattern))
+        deleted = 0
+        for rev in review_objs:
+            deleted += 1
+            rev.delete()
+        res = review_objs
+        
+        if deleted == 0:
             res = "No reviews found to delete!"
         return jsonify(res)
 
