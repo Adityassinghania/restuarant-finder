@@ -12,4 +12,3 @@ db.init_app(app)
 api.init_app(app)
 
 from application import routes
-

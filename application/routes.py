@@ -1,7 +1,7 @@
 from os import abort
 import re
 from Extras.helpers import generate_22char_uuid
-from application import app,api
+from application import api
 from models import yelp_businesses, yelp_reviews, yelp_users, yelp_checkins
 from flask import jsonify, request, Response
 from flask_mongoengine import MongoEngine
