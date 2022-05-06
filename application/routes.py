@@ -123,7 +123,7 @@ class UpdateRestaurantReview(Resource):
 
 @api.route('/delete_review')
 class UpdateRestaurantReview(Resource):
-    def put(self):
+    def delete(self):
         data = api.payload
         review_obj = yelp_reviews.objects(review_id = data["review_id"])
         if review_obj[0]["user_id"] == data["token"]:
