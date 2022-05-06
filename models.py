@@ -3,13 +3,13 @@ from application import db
 
 class yelp_reviews(db.Document):
     
-    review_id =  db.StringField(unique = True, max_length = 22)
+    review_id =  db.StringField(max_length = 22)
 
     # string, 22 character business id, maps to business in business.json
     business_id = db.StringField(max_length = 22)
 
     # string, 22 character unique user id, maps to the user in user.json
-    user_id =  db.StringField(unique_with = 'review_id', max_length = 22)
+    user_id =  db.StringField(max_length = 22)
 
     # // integer, star rating
     stars =  db.IntField(default=0, max_value = 5)
