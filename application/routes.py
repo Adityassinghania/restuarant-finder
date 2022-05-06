@@ -121,6 +121,20 @@ class UpdateRestaurantReview(Resource):
 
         return jsonify(res)
 
+@api.route('/delete_review')
+class UpdateRestaurantReview(Resource):
+    def put(self):
+        data = api.payload
+        review_obj = yelp_reviews.objects(review_id = data["review_id"])
+        if review_obj[0]["user_id"] == data["token"]:
+            for rev in review_obj:
+                rev["text"] = data["text"]
+                res = rev.delete()
+        else:
+            res = "invalid review or invalid token"
+
+        return jsonify(res)
+
 @api.route('/add_checkin/<b_id>')
 class AddCheckIn(Resource):
     def put(self,b_id):
