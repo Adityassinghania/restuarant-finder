@@ -122,7 +122,7 @@ class UpdateRestaurantReview(Resource):
         return jsonify(res)
 
 @api.route('/delete_review')
-class UpdateRestaurantReview(Resource):
+class DeleteRestaurantReview(Resource):
     def delete(self):
         data = api.payload
         review_obj = yelp_reviews.objects(review_id = data["review_id"])
