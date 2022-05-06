@@ -9,7 +9,11 @@ class yelp_reviews(db.Document):
     business_id = db.StringField(max_length = 22)
 
     # string, 22 character unique user id, maps to the user in user.json
+<<<<<<< HEAD
     user_id =  db.StringField(max_length = 22)
+=======
+    user_id =  db.StringField(unique_with = 'review_id', max_length = 22)
+>>>>>>> 13c2e55 (fixed error at unique with)
 
     # // integer, star rating
     stars =  db.IntField(default=0, max_value = 5)
