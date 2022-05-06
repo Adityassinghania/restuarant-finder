@@ -1,3 +1,4 @@
+from cgitb import text
 from os import abort
 import re
 from Extras.helpers import generate_22char_uuid
@@ -112,10 +113,8 @@ class UpdateRestaurantReview(Resource):
     def put(self):
         data = api.payload
         review_obj = yelp_reviews.objects(review_id = data["review_id"])
-        if review_obj[0]["user_id"] == data["token"]:
-            for rev in review_obj:
-                rev["text"] = data["text"]
-                res = rev.save()
+        if review_obj[0]["user_id"] == data["user_id"]:
+            res = yelp_reviews.objects(review_id = data["review_id"], business_id = data["business_id"]).update_one(set__text = data["text"])
         else:
             res = "invalid review or invalid token"
 
@@ -126,10 +125,8 @@ class DeleteRestaurantReview(Resource):
     def delete(self):
         data = api.payload
         review_obj = yelp_reviews.objects(review_id = data["review_id"])
-        if review_obj[0]["user_id"] == data["token"]:
-            for rev in review_obj:
-                rev["text"] = data["text"]
-                res = rev.delete()
+        if review_obj[0]["user_id"] == data["user_id"]:
+                res = yelp_reviews.objects(review_id = data["review_id"],business_id = data["business_id"]).delete()
         else:
             res = "invalid review or invalid token"
 
