@@ -46,13 +46,9 @@ class DeleteShortReviews(Resource):
     def delete(self, char_count):
         pattern = '^[a-zA-Z]{1,' + char_count + '}'
         review_objs = yelp_reviews.objects(text__regex = re.compile(pattern))
-        deleted = 0
-        for rev in review_objs:
-            deleted += 1
-            rev.delete()
-        res = review_objs
+        res = review_objs.delete()
         
-        if deleted == 0:
+        if res == 0:
             res = "No reviews found to delete!"
         return jsonify(res)
 
@@ -60,32 +56,34 @@ class DeleteShortReviews(Resource):
 class UpdateUserTrustRating(Resource):
     def put(self,rev_count):
         review_threshold = int(rev_count)
+
         # get user with review count greater than equal to threshold
         user_objs = yelp_users.objects(review_count__gte = review_threshold)
         year = datetime.now().year
+
+        userIDs = []
         # update year in user
         for user in user_objs:
-            # i had to change "elite" to just String type, ListField(stringfield) wasn't working for some reason
-            # same for other attributes previously that were ListFields
             if str(year) not in user["elite"]:
-                user["elite"] += ', ' + str(year)
-                user.save()
-        res = user_objs
+                userIDs.append(user["user_id"])
+
+        for id in userIDs:
+            res = yelp_users.objects(user_id = id)
+            res.update_one(set__elite = res[0]["elite"] + ',' + str(year))
+
         return jsonify(res)
 
 @api.route('/user_useful_rev/<b_id>')
 class GetUsersWithMaxUsefulReviews(Resource):
     def get(self,b_id):
         # get reviews for a specific business
-        rev_objs = yelp_reviews.objects(business_id=b_id).order_by("useful")
+        rev_objs = yelp_reviews.objects(business_id=b_id).order_by("-useful")
         number_of_reviews = len(rev_objs) if len(rev_objs) < 10 else 10
+
         # get top 10 most useful reviews
         review_users = [rev_objs[i]["user_id"] for i in range(number_of_reviews)]
 
-        # get users that reviewed that business
-        user_objs = yelp_users.objects(user_id__in = review_users)
-
-        return jsonify(user_objs)
+        return jsonify(review_users)
 
 @api.route('/restaurants_user_match/<city_name>/<user_input>')
 class GetRestaurantsBasedOnUserInput(Resource):
@@ -156,11 +154,11 @@ class SortReviews(Resource):
         return jsonify(review_objs)
 
 @api.route('/review_useful/<r_id>')
-class IncrementReviewUseful(Resource):
+class IncrementBusinessReviewCount(Resource):
     def put(self, r_id):
-        review_obj = yelp_reviews.objects(review_id = r_id).first()
-        review_obj["useful"] += 1
-        res = review_obj.save(review_obj)
+        business_obj = yelp_reviews.objects(business_id = r_id).first()
+        business_obj["review_count"] += 1
+        res = business_obj.save(business_obj)
         return jsonify(res)
 
 @api.route('/restaurants_by_category/<category>')
